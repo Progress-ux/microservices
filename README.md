@@ -19,6 +19,23 @@
   - `enums` - перечисления ролей
 - `.exception` - кастомные исключения и `GlobalExceptionHandler`.
 
+### Запуск проекта
+
+1. Запустить PostgreSQL через Docker:
+
+```bash
+docker compose up -d
+```
+
+2. Запустить приложение через IntelliJ IDEA:
+- открыть `SchoolMicroservicesApplication`
+- нажать `Run`
+
+3. Swagger UI:
+```text
+http://localhost:8080/swagger-ui.html
+```
+
 ### Пример запроса на регистрацию:
 ```
 {
