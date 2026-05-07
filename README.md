@@ -10,18 +10,13 @@
 - Swagger
 ### Базовая структура проекта:
 - `com.progress.schoolmicroservices` - главный класс `SchoolMicroservicesApplication`
-
 - `.controller` - классы с `@RestController`. Принимают HTTP-запросы и возвращают ответы.
-
 - `.service` - бизнес-логика. Здесь лежат `@Service`. Обрабатывают данные, выбрасывают исключения.
-
 - `.repository` - интерфейсы для работы с БД (`JpaRepository`).
-
 - `.model`
-├── `entity` - JPA entities
-├── `dto` - объекты передачи данных
-└── `enums` - перечисления ролей
-
+  - `entity` - JPA entities
+  - `dto` - объекты передачи данных
+  - `enums` - перечисления ролей
 - `.exception` - кастомные исключения и `GlobalExceptionHandler`.
 
 ### Пример запроса на регистрацию:
