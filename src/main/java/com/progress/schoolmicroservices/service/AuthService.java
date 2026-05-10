@@ -5,6 +5,8 @@ import com.progress.schoolmicroservices.model.dto.RegisterRequest;
 import com.progress.schoolmicroservices.model.entity.User;
 import com.progress.schoolmicroservices.model.enums.Role;
 import com.progress.schoolmicroservices.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
+    @Transactional
     public void register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Пользователь с таким email уже существует");
