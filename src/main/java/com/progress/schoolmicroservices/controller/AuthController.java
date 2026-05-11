@@ -1,5 +1,6 @@
 package com.progress.schoolmicroservices.controller;
 
+import com.progress.schoolmicroservices.model.dto.MessageResponse;
 import com.progress.schoolmicroservices.model.dto.RegisterRequest;
 import com.progress.schoolmicroservices.service.AuthService;
 import jakarta.validation.Valid;
@@ -18,12 +19,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(
+    public ResponseEntity<MessageResponse> register(
             @Valid @RequestBody RegisterRequest request
     ) {
         authService.register(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Пользователь зарегистрирован");
+                .body(new MessageResponse("Пользователь зарегистрирован"));
     }
 }
