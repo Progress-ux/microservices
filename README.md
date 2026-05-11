@@ -24,12 +24,25 @@
 1. Запустить PostgreSQL через Docker:
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
 2. Запустить приложение через IntelliJ IDEA:
 - открыть `SchoolMicroservicesApplication`
 - нажать `Run`
+
+#### Или через консоль
+
+```bash
+./gradlew bootRun
+```
+
+#### Если запускать проект полностью через docker:
+
+```bash
+docker compose up --build
+```
+
 
 3. Swagger UI:
 ```text
