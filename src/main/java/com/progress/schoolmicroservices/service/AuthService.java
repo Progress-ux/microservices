@@ -19,7 +19,7 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail().trim().toLowerCase())) {
             throw new EmailAlreadyExistsException("Пользователь с таким email уже существует");
         }
 
