@@ -71,7 +71,7 @@ http://localhost:8080/swagger-ui.html
 #### Error: response status is 409
 ```
 {
-"Пользователь с таким email уже существует"
+"error": "Пользователь с таким email уже существует"
 }
 ```
 
