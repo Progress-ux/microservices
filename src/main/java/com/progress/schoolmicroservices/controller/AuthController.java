@@ -1,5 +1,7 @@
 package com.progress.schoolmicroservices.controller;
 
+import com.progress.schoolmicroservices.model.dto.LoginRequest;
+import com.progress.schoolmicroservices.model.dto.LoginResponse;
 import com.progress.schoolmicroservices.model.dto.MessageResponse;
 import com.progress.schoolmicroservices.model.dto.RegisterRequest;
 import com.progress.schoolmicroservices.service.AuthService;
@@ -24,7 +26,17 @@ public class AuthController {
     ) {
         authService.register(request);
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageResponse("Пользователь зарегистрирован"));
+        .status(HttpStatus.CREATED) 
+        .body(new MessageResponse("Пользователь зарегистрирован"));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+        @Valid @RequestBody LoginRequest request
+    ) {
+        String token = authService.login(request);
+        return ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(new LoginResponse(token));
     }
 }
