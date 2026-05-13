@@ -2,12 +2,14 @@
 
 ### Текущий функционал:
 - Регистрация пользователей
+- Получение JWT Токена 
 ### Стек:
 - Spring Boot
 - Spring Security
 - PostgreSql
 - Docker
 - Swagger
+- JWT (JJWT)
 ### Базовая структура проекта:
 - `com.progress.schoolmicroservices` - главный класс `SchoolMicroservicesApplication`
 - `.controller` - классы с `@RestController`. Принимают HTTP-запросы и возвращают ответы.

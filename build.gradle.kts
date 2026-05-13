@@ -29,8 +29,18 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    implementation(platform("io.jsonwebtoken:jjwt-bom:0.13.0"))
+    implementation("io.jsonwebtoken:jjwt-api")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson")
+
     compileOnly("org.projectlombok:lombok")
+
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+    
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")

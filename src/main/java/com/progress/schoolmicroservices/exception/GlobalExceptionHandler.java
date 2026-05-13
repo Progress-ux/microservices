@@ -22,6 +22,12 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(ex.getMessage());
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
