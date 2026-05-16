@@ -27,7 +27,7 @@ public class SecurityBeansConfig {
                     "/swagger-ui.html"
                 )
                 .permitAll()
-                .requestMatchers("/login", "/register").permitAll()
+                .requestMatchers("/login", "/register", "/refresh").permitAll()
                 .anyRequest().authenticated()
         )
         .sessionManagement(session -> session
