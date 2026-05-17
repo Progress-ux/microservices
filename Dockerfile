@@ -1,30 +1,26 @@
-FROM gradle:8-jdk21 AS build
+FROM gradle:9.4-jdk21 AS build
 WORKDIR /app
 
-# Copy build files for cache dependence
-COPY build.gradle.kts settings.gradle.kts gradlew ./
-COPY gradle ./gradle
+ENV GRADLE_OPTS="-Dorg.gradle.daemon=false"
 
+COPY build.gradle.kts settings.gradle.kts ./
 COPY auth-service/build.gradle.kts ./auth-service/
 COPY gateway-service/build.gradle.kts ./gateway-service/
 
-RUN chmod +x gradlew
-RUN ./gradlew dependencies --no-daemon
+RUN gradle dependencies --no-daemon || true
 
 COPY auth-service/src ./auth-service/src
 COPY gateway-service/src ./gateway-service/src
 
-ARG SERVICE_NAME=auth-service
+ARG SERVICE_NAME
 
-# Build jar-file (skip tests for high speed)
-RUN ./gradlew :${SERVICE_NAME}:bootJar -x test --no-daemon
+RUN gradle :${SERVICE_NAME}:bootJar --no-daemon
 
-# Run project
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-ARG SERVICE_NAME=auth-service
+ARG SERVICE_NAME
 
-# Copy builded jar-file an build/libs
 COPY --from=build /app/${SERVICE_NAME}/build/libs/*.jar app.jar
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
