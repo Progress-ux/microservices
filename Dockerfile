@@ -12,9 +12,9 @@ RUN gradle dependencies --no-daemon || true
 COPY auth-service/src ./auth-service/src
 COPY gateway-service/src ./gateway-service/src
 
-ARG SERVICE_NAME
+ARG SERVICE_NAME=auth-service
 
-RUN gradle :${SERVICE_NAME}:bootJar --no-daemon
+RUN gradle :${SERVICE_NAME}:bootJar -x test --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
