@@ -30,12 +30,10 @@ public class SecurityBeansConfig {
                     "/swagger-resources/**",       
                     "/webjars/**",                
                     "/api/v1/auth/**",
-                    "/login", 
-                    "/register",
                     "/error"
                 ).permitAll()
 
-                .requestMatchers("/login", "/register", "/refresh").permitAll()
+                .requestMatchers("/login", "/register", "/refresh", "/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated()
         )
         .sessionManagement(session -> session
