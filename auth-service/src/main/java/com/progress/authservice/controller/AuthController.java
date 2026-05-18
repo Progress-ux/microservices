@@ -1,9 +1,9 @@
 package com.progress.authservice.controller;
 
+import com.progress.authservice.model.dto.JwkResponse;
 import com.progress.authservice.model.dto.LoginRequest;
 import com.progress.authservice.model.dto.LoginResponse;
 import com.progress.authservice.model.dto.MessageResponse;
-import com.progress.authservice.model.dto.PublicKeyResponse;
 import com.progress.authservice.model.dto.RefreshRequest;
 import com.progress.authservice.model.dto.RefreshResponse;
 import com.progress.authservice.model.dto.RegisterRequest;
@@ -57,11 +57,10 @@ public class AuthController {
             .body(new RefreshResponse(tokens.getFirst(), tokens.getLast()));
     }
 
-    @GetMapping("/public-key")
-    public ResponseEntity<PublicKeyResponse> getPublicKey() {
-        String encodedKey = authService.getEncodedKey();
+    @GetMapping("/.well-known/jwks.json")
+    public ResponseEntity<JwkResponse> getPublicKey() {
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(new PublicKeyResponse(encodedKey));
+            .body(authService.getJwkSet());
     }
 }
