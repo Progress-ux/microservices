@@ -3,7 +3,7 @@ package com.progress.authservice.security.config;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -35,7 +35,7 @@ public class JwtKeyConfig {
    }
 
    @Bean
-   public PublicKey publicKey() throws Exception {
+   public RSAPublicKey publicKey() throws Exception {
       String publicKeyPEM = new String(publicKeyResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8)
          .replace("-----BEGIN PUBLIC KEY-----", "")
          .replace("-----END PUBLIC KEY-----", "")
@@ -46,6 +46,6 @@ public class JwtKeyConfig {
       X509EncodedKeySpec spec = new X509EncodedKeySpec(decoded); 
       KeyFactory kf = KeyFactory.getInstance("RSA");
 
-      return kf.generatePublic(spec);
+      return (RSAPublicKey) kf.generatePublic(spec);
    }
 }
