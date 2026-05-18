@@ -2,6 +2,8 @@ package com.progress.authservice.service;
 
 import com.progress.authservice.exception.EmailAlreadyExistsException;
 import com.progress.authservice.exception.InvalidCredentialsException;
+import com.progress.authservice.model.dto.JwkDto;
+import com.progress.authservice.model.dto.JwkResponse;
 import com.progress.authservice.model.dto.LoginRequest;
 import com.progress.authservice.model.dto.RegisterRequest;
 import com.progress.authservice.model.entity.User;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 import java.util.List;
 
@@ -25,6 +28,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenService; 
+
+    private final RSAPublicKey publicKey;
 
     @Transactional
     public void register(RegisterRequest request) {
@@ -88,7 +93,20 @@ public class AuthService {
         }
     }
 
-    public String getEncodedKey() {
-        return Base64.getEncoder().encodeToString(jwtTokenService.getPublicKey().getEncoded());
+    public JwkResponse getJwkSet() {
+        String modulus = Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(publicKey.getModulus().toByteArray());
+        String exponent = Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(publicKey.getPublicExponent().toByteArray());
+        
+        JwkDto jwk = new JwkDto(
+            "RSA",
+            "RS256",
+            "sig",
+            "school-auth-key-id",
+            modulus,
+            exponent
+        );
+        return new JwkResponse(List.of(jwk));
     }
 }

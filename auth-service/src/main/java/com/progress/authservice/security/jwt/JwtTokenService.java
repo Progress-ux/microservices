@@ -25,6 +25,7 @@ public class JwtTokenService {
 
    public String generateToken(String email, long duration, String tokenType) {
       return Jwts.builder()
+         .header().keyId("school-auth-key-id").and()
          .subject(email)
          .claim("token_type", tokenType)
          .issuedAt(new Date())
