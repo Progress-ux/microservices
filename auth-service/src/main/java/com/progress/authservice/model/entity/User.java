@@ -17,19 +17,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false, length = 64)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false, length = 64)
     private String lastName;
 
-    @Column(name = "middle_name")
+    @Column(name = "middle_name", length = 64)
     private String middleName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, length = 64)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
     private String password;
 
     @Enumerated(EnumType.STRING)
