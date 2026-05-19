@@ -50,10 +50,9 @@ public class AuthController {
     public ResponseEntity<RefreshResponse> refresh(
         @Valid @RequestBody RefreshRequest request
     ) {
-        List<String> tokens = authService.refresh(request.refreshToken());
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
-            .body(new RefreshResponse(tokens.getFirst(), tokens.getLast()));
+            .body(authService.refresh(request.refreshToken()));
     }
 
     @GetMapping("/.well-known/jwks.json")

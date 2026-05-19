@@ -6,6 +6,7 @@ import com.progress.authservice.model.dto.JwkDto;
 import com.progress.authservice.model.dto.JwkResponse;
 import com.progress.authservice.model.dto.LoginRequest;
 import com.progress.authservice.model.dto.LoginResponse;
+import com.progress.authservice.model.dto.RefreshResponse;
 import com.progress.authservice.model.dto.RegisterRequest;
 import com.progress.authservice.model.entity.User;
 import com.progress.authservice.model.enums.Role;
@@ -71,7 +72,7 @@ public class AuthService {
     }
 
     @Transactional
-    public List<String> refresh(String refreshToken) {
+    public RefreshResponse refresh(String refreshToken) {
         try {
             Claims claims = jwtTokenService.parseToken(refreshToken);
 
@@ -88,7 +89,7 @@ public class AuthService {
             String newAccessToken = jwtTokenService.generateToken(email, ACCESS_TOKEN_MS, "ACCESS");
             String newRefreshToken = jwtTokenService.generateToken(email, REFRESH_TOKEN_MS, "REFRESH");
 
-            return List.of(newAccessToken, newRefreshToken);
+            return new RefreshResponse(newAccessToken, newRefreshToken);
         } catch (Exception e) {
             throw new InvalidCredentialsException("Токен обновления недействителен или просрочен");
         }
