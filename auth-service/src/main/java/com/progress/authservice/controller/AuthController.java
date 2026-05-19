@@ -41,10 +41,9 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
         @Valid @RequestBody LoginRequest request
     ) {
-        List<String> tokens = authService.login(request);
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
-            .body(new LoginResponse(tokens.getFirst(), tokens.getLast()));
+            .body(authService.login(request));
     }
 
     @PostMapping("/refresh")

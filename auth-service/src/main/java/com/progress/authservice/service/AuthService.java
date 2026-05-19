@@ -5,6 +5,7 @@ import com.progress.authservice.exception.InvalidCredentialsException;
 import com.progress.authservice.model.dto.JwkDto;
 import com.progress.authservice.model.dto.JwkResponse;
 import com.progress.authservice.model.dto.LoginRequest;
+import com.progress.authservice.model.dto.LoginResponse;
 import com.progress.authservice.model.dto.RegisterRequest;
 import com.progress.authservice.model.entity.User;
 import com.progress.authservice.model.enums.Role;
@@ -52,7 +53,7 @@ public class AuthService {
     }
 
     @Transactional
-    public List<String> login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
             .orElseThrow(() -> new InvalidCredentialsException("Неверный email или пароль"));
 
@@ -66,7 +67,7 @@ public class AuthService {
         String accessToken = jwtTokenService.generateToken(user.getEmail(), ACCESS_TOKEN_MS, "ACCESS");
         String refreshToken = jwtTokenService.generateToken(user.getEmail(), REFRESH_TOKEN_MS, "REFRESH");
 
-        return List.of(accessToken, refreshToken);
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     @Transactional
