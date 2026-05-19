@@ -11,8 +11,6 @@ import com.progress.authservice.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,20 +39,18 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(
         @Valid @RequestBody LoginRequest request
     ) {
-        List<String> tokens = authService.login(request);
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
-            .body(new LoginResponse(tokens.getFirst(), tokens.getLast()));
+            .body(authService.login(request));
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<RefreshResponse> refresh(
         @Valid @RequestBody RefreshRequest request
     ) {
-        List<String> tokens = authService.refresh(request.refreshToken());
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
-            .body(new RefreshResponse(tokens.getFirst(), tokens.getLast()));
+            .body(authService.refresh(request.refreshToken()));
     }
 
     @GetMapping("/.well-known/jwks.json")

@@ -5,6 +5,8 @@ import com.progress.authservice.exception.InvalidCredentialsException;
 import com.progress.authservice.model.dto.JwkDto;
 import com.progress.authservice.model.dto.JwkResponse;
 import com.progress.authservice.model.dto.LoginRequest;
+import com.progress.authservice.model.dto.LoginResponse;
+import com.progress.authservice.model.dto.RefreshResponse;
 import com.progress.authservice.model.dto.RegisterRequest;
 import com.progress.authservice.model.entity.User;
 import com.progress.authservice.model.enums.Role;
@@ -16,9 +18,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,12 @@ public class AuthService {
     private final JwtTokenService jwtTokenService; 
 
     private final RSAPublicKey publicKey;
+
+    @Value("${jwt.life-time.access-token}")
+    private Duration accessTokenLifeTime;
+
+    @Value("${jwt.life-time.refresh-token}")
+    private Duration refreshTokenLifeTime;
 
     @Transactional
     public void register(RegisterRequest request) {
@@ -52,7 +62,7 @@ public class AuthService {
     }
 
     @Transactional
-    public List<String> login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
             .orElseThrow(() -> new InvalidCredentialsException("Неверный email или пароль"));
 
@@ -60,17 +70,22 @@ public class AuthService {
             throw new InvalidCredentialsException("Неверный email или пароль");
         }
         
-        long ACCESS_TOKEN_MS = 15 * 60 * 1000;
-        long REFRESH_TOKEN_MS = 7 * 24 * 60 * 60 * 1000L;
+        String accessToken = jwtTokenService.generateToken(
+            user.getEmail(), 
+            accessTokenLifeTime.toMillis(), 
+            "ACCESS"
+        );
+        String refreshToken = jwtTokenService.generateToken(
+            user.getEmail(), 
+            refreshTokenLifeTime.toMillis(), 
+            "REFRESH"
+        );
 
-        String accessToken = jwtTokenService.generateToken(user.getEmail(), ACCESS_TOKEN_MS, "ACCESS");
-        String refreshToken = jwtTokenService.generateToken(user.getEmail(), REFRESH_TOKEN_MS, "REFRESH");
-
-        return List.of(accessToken, refreshToken);
+        return new LoginResponse(accessToken, refreshToken);
     }
 
     @Transactional
-    public List<String> refresh(String refreshToken) {
+    public RefreshResponse refresh(String refreshToken) {
         try {
             Claims claims = jwtTokenService.parseToken(refreshToken);
 
@@ -81,13 +96,18 @@ public class AuthService {
 
             String email = claims.getSubject();
 
-            long ACCESS_TOKEN_MS = 15 * 60 * 1000;
-            long REFRESH_TOKEN_MS = 7 * 24 * 60 * 60 * 1000L;
+            String newAccessToken = jwtTokenService.generateToken(
+                email, 
+                accessTokenLifeTime.toMillis(), 
+                "ACCESS"
+            );
+            String newRefreshToken = jwtTokenService.generateToken(
+                email, 
+                refreshTokenLifeTime.toMillis(), 
+                "REFRESH"
+            );
 
-            String newAccessToken = jwtTokenService.generateToken(email, ACCESS_TOKEN_MS, "ACCESS");
-            String newRefreshToken = jwtTokenService.generateToken(email, REFRESH_TOKEN_MS, "REFRESH");
-
-            return List.of(newAccessToken, newRefreshToken);
+            return new RefreshResponse(newAccessToken, newRefreshToken);
         } catch (Exception e) {
             throw new InvalidCredentialsException("Токен обновления недействителен или просрочен");
         }
