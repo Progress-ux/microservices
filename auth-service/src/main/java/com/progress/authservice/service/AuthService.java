@@ -18,9 +18,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,12 @@ public class AuthService {
     private final JwtTokenService jwtTokenService; 
 
     private final RSAPublicKey publicKey;
+
+    @Value("${jwt.life-time.access-token}")
+    private Duration accessTokenLifeTime;
+
+    @Value("${jwt.life-time.refresh-token}")
+    private Duration refreshTokenLifeTime;
 
     @Transactional
     public void register(RegisterRequest request) {
@@ -62,11 +70,16 @@ public class AuthService {
             throw new InvalidCredentialsException("Неверный email или пароль");
         }
         
-        long ACCESS_TOKEN_MS = 15 * 60 * 1000;
-        long REFRESH_TOKEN_MS = 7 * 24 * 60 * 60 * 1000L;
-
-        String accessToken = jwtTokenService.generateToken(user.getEmail(), ACCESS_TOKEN_MS, "ACCESS");
-        String refreshToken = jwtTokenService.generateToken(user.getEmail(), REFRESH_TOKEN_MS, "REFRESH");
+        String accessToken = jwtTokenService.generateToken(
+            user.getEmail(), 
+            accessTokenLifeTime.toMillis(), 
+            "ACCESS"
+        );
+        String refreshToken = jwtTokenService.generateToken(
+            user.getEmail(), 
+            refreshTokenLifeTime.toMillis(), 
+            "REFRESH"
+        );
 
         return new LoginResponse(accessToken, refreshToken);
     }
@@ -83,11 +96,16 @@ public class AuthService {
 
             String email = claims.getSubject();
 
-            long ACCESS_TOKEN_MS = 15 * 60 * 1000;
-            long REFRESH_TOKEN_MS = 7 * 24 * 60 * 60 * 1000L;
-
-            String newAccessToken = jwtTokenService.generateToken(email, ACCESS_TOKEN_MS, "ACCESS");
-            String newRefreshToken = jwtTokenService.generateToken(email, REFRESH_TOKEN_MS, "REFRESH");
+            String newAccessToken = jwtTokenService.generateToken(
+                email, 
+                accessTokenLifeTime.toMillis(), 
+                "ACCESS"
+            );
+            String newRefreshToken = jwtTokenService.generateToken(
+                email, 
+                refreshTokenLifeTime.toMillis(), 
+                "REFRESH"
+            );
 
             return new RefreshResponse(newAccessToken, newRefreshToken);
         } catch (Exception e) {
