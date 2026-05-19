@@ -2,6 +2,9 @@ server:
   port: 8081
 
 jwt:
+  life-time:
+    access-token: 15m
+    refresh-token: 7d
   private-key-path: classpath:/private_key_pkcs8.pem
   public-key-path: classpath:/public_key.pem
 
